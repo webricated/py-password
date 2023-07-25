@@ -1,0 +1,62 @@
+import random
+import string
+import tkinter as tk
+from tkinter import messagebox
+import pyperclip  # Used for copying the generated password to clipboard
+
+def generate_password(length):
+    characters = string.ascii_letters + string.digits
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
+def generate_password_button():
+    username = username_entry.get()
+    try:
+        length = int(length_entry.get())
+        if length <= 0:
+            raise ValueError
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid positive integer for password length.")
+        return
+
+    password = generate_password(length)
+    password_output.config(text=f"Generated password for '{username}': {password}")
+    pyperclip.copy(password)
+
+def reset_button():
+    username_entry.delete(0, tk.END)
+    length_entry.delete(0, tk.END)
+    password_output.config(text="")
+
+# Create the main application window
+app = tk.Tk()
+app.title("Password Generator App")
+app.geometry("400x250")
+
+# Create widgets (labels, entry fields, and buttons)
+username_label = tk.Label(app, text="Enter your username:")
+username_label.pack()
+
+username_entry = tk.Entry(app)
+username_entry.pack()
+
+length_label = tk.Label(app, text="Enter the desired length of the password:")
+length_label.pack()
+
+length_entry = tk.Entry(app)
+length_entry.pack()
+
+generate_button = tk.Button(app, text="Generate Password", command=generate_password_button)
+generate_button.pack()
+
+password_output = tk.Label(app, text="")
+password_output.pack()
+
+accept_button = tk.Button(app, text="Accept", command=lambda: pyperclip.copy(password_output.cget("text").split(": ")[1]))
+accept_button.pack()
+
+reset_button = tk.Button(app, text="Reset", command=reset_button)
+reset_button.pack()
+
+# Start the tkinter main loop
+app.mainloop()
